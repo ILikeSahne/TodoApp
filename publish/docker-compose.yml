@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  todoapi:
+    container_name: todoapi
+    image: ilikesahne/todoapi:latest
+    restart: always
+    ports:
+      - '10001:10001'
+      - '10002:10002'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:10002;http://+:10001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro

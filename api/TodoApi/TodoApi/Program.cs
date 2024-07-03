@@ -1,6 +1,17 @@
+using Markdig;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TodoApi.Model;
+using TodoApi.Model.Models;
+using TodoApi.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<DatabaseContext>(opt =>
+    opt.UseInMemoryDatabase("TodoList"));
+
+builder.Services.AddTransient<ITodoRepository, TodoRepository>();
 
 var app = builder.Build();
 
@@ -8,29 +19,36 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+var descriptionFilePath = Path.Combine(AppContext.BaseDirectory, "Description.md");
+var description = File.ReadAllText(descriptionFilePath);
+var htmlDescription = Markdown.ToHtml(description);
 
-app.MapGet("/", () => "Todo Api");
+app.MapGet("/", () => Results.Content(htmlDescription, "text/html"));
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/todos", async (ITodoRepository todoRepository, [FromBody] TodoListDto todoList) =>
 {
-  var forecast = Enumerable.Range(1, 5).Select(index =>
-      new WeatherForecast
-      (
-          DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-          Random.Shared.Next(-20, 55),
-          summaries[Random.Shared.Next(summaries.Length)]
-      ))
-      .ToArray();
-  return forecast;
+    try
+    {
+        await todoRepository.AddOrUpdateTodoListAsync(todoList);
+
+        return Results.Created($"/todos/{todoList.Name}", todoList);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
+app.MapGet("/todos/{name}", async (string name, ITodoRepository todoRepository) =>
+{
+    try
+    {
+        return Results.Ok(await todoRepository.GetTodoListAsync(name));
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
 });
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
