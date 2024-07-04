@@ -21,11 +21,7 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
             existingTodoList.Todos = new List<Todo>();
             foreach (var todoDto in todoListDto.Todos)
             {
-                existingTodoList.Todos.Add(new Todo
-                {
-                    Name = todoDto.Name,
-                    Completed = todoDto.Completed
-                });
+                existingTodoList.Todos.Add(todoDto.ToTodo());
             }
 
             DatabaseContext.Entry(existingTodoList).State = EntityState.Modified;
@@ -38,11 +34,7 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
         await DatabaseContext.TodoLists.AddAsync(new TodoList()
         {
             Name = todoListDto.Name,
-            Todos = todoListDto.Todos.Select(t => new Todo
-            {
-                Name = t.Name,
-                Completed = t.Completed
-            }).ToList()
+            Todos = todoListDto.Todos.Select(t => t.ToTodo()).ToList()
         });
 
         await DatabaseContext.SaveChangesAsync();
@@ -63,11 +55,7 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
         var todoListDto = new TodoListDto
         {
             Name = todoList.Name,
-            Todos = todoList.Todos.Select(t => new TodoDto
-            {
-                Name = t.Name,
-                Completed = t.Completed
-            }).ToList()
+            Todos = todoList.Todos.Select(t => new TodoDto(t)).ToList()
         };
 
         return todoListDto;
