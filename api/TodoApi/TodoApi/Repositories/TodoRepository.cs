@@ -31,20 +31,16 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
             return;
         }
 
-        await DatabaseContext.TodoLists.AddAsync(new TodoList()
-        {
-            Name = todoListDto.Name,
-            Todos = todoListDto.Todos.Select(t => t.ToTodo()).ToList()
-        });
+        await DatabaseContext.TodoLists.AddAsync(todoListDto.ToTodoList());
 
         await DatabaseContext.SaveChangesAsync();
     }
 
-    public async Task<TodoListDto> GetTodoListAsync(string name)
+    public async Task<TodoListDto> GetTodoListAsync(string username, string todoListName)
     {
         var todoList = await DatabaseContext.TodoLists
             .Include(tl => tl.Todos)
-            .Where(tl => tl.Name == name)
+            .Where(tl => tl.Name == todoListName && tl.CreatedByUser == username)
             .FirstOrDefaultAsync();
 
         if (todoList is null)
@@ -52,11 +48,7 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
             throw new ArgumentException("Todo list not found");
         }
 
-        var todoListDto = new TodoListDto
-        {
-            Name = todoList.Name,
-            Todos = todoList.Todos.Select(t => new TodoDto(t)).ToList()
-        };
+        var todoListDto = new TodoListDto(todoList);
 
         return todoListDto;
     }

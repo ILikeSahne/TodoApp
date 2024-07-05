@@ -1,6 +1,6 @@
 @TodoApi_HostAddress = https://localhost:10002
 
-GET {{TodoApi_HostAddress}}/todos/test
+GET {{TodoApi_HostAddress}}/todos/test234
 Accept: application/json
 
 ###

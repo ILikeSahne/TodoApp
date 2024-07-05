@@ -6,5 +6,7 @@ public class TodoList
 
     public string Name { get; set; } = string.Empty;
 
+    public string CreatedByUser { get; set; } = string.Empty;
+
     public List<Todo> Todos { get; set; } = new List<Todo>();
 }

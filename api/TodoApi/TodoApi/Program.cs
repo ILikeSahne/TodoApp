@@ -39,11 +39,11 @@ app.MapPost("/todos", async (ITodoRepository todoRepository, [FromBody] TodoList
     }
 });
 
-app.MapGet("/todos/{name}", async (string name, ITodoRepository todoRepository) =>
+app.MapGet("/todos/{username}/{todoName}", async (string username, string todoName, ITodoRepository todoRepository) =>
 {
     try
     {
-        return Results.Ok(await todoRepository.GetTodoListAsync(name));
+        return Results.Ok(await todoRepository.GetTodoListAsync(username, todoName));
     }
     catch (Exception ex)
     {

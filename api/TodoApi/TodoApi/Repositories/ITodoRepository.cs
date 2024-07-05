@@ -4,7 +4,7 @@ namespace TodoApi.Repositories;
 
 public interface ITodoRepository
 {
-    Task<TodoListDto> GetTodoListAsync(string name);
+    Task<TodoListDto> GetTodoListAsync(string username, string todoName);
 
     Task AddOrUpdateTodoListAsync(TodoListDto todoListDto);
 }
