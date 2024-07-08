@@ -1,14 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
-import {Alert, FlatList, StyleSheet, Text, View} from 'react-native';
-import TodoList from '../components/todolist/TodoList';
+import {Alert, FlatList, StyleSheet, View} from 'react-native';
 import GlobalStyles from '../style/GlobalStyles';
-import {Button, Icon, IconButton} from 'react-native-paper';
+import {IconButton, useTheme} from 'react-native-paper';
 import Dialog from 'react-native-dialog';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {ParamListBase, RouteProp, useRoute} from '@react-navigation/native';
 import {TodoListViewerRouteParams} from './TodoListViewer';
-import EditableItem from '../components/common/EditableItem';
+import TodoListItem from '../components/todolist/TodoListItem';
+import {MD3Colors} from 'react-native-paper/lib/typescript/types';
+import {
+  createEmptyTodoList,
+  renameTodoList,
+} from '../api/todolist/TodoListApiHelper';
+import {showMessage} from 'react-native-flash-message';
+import AddButton from '../components/common/AddButton';
 
 const defaultNewTodoListName = 'New Todo-List';
 
@@ -27,6 +32,9 @@ function TodoListsScreen({
   route,
   navigation,
 }: TodoListsScreenProps): React.JSX.Element {
+  const theme = useTheme();
+  const styles = makeStyles(theme.colors);
+
   const [todoLists, setTodoLists] = useState<string[]>([]);
   const [newTodoListName, setNewTodoListName] = useState(
     defaultNewTodoListName,
@@ -45,20 +53,22 @@ function TodoListsScreen({
     setTodoLists(todoLists);
   }
 
-  function addTodoList(todoListName: string) {
-    if (todoLists.includes(todoListName)) {
+  function addTodoList() {
+    if (todoLists.includes(newTodoListName)) {
       Alert.alert('Todo-List already exists');
       return;
     }
 
-    setTodoLists([...todoLists, todoListName]);
-
     setAddTodoListDialogVisible(false);
+
+    setTodoLists([...todoLists, newTodoListName]);
+
+    createEmptyTodoList(route!.params!.username, newTodoListName);
   }
 
-  function showNewTodoListDialog() {
-    setAddTodoListDialogVisible(true);
-  }
+  const closeNewTodoListDialog = () => {
+    setAddTodoListDialogVisible(false);
+  };
 
   function openTodoList(todoListName: string) {
     navigation?.navigate('TodoListViewer', {
@@ -78,48 +88,61 @@ function TodoListsScreen({
     );
   }, [todoLists]);
 
+  const renameTodo = (todoListName: string, newName: string) => {
+    todoLists.splice(todoLists.indexOf(todoListName), 1, newName);
+
+    setTodoLists([...todoLists]);
+
+    renameTodoList(route!.params!.username, todoListName, newName);
+  };
+
+  const deleteTodoList = (todoListName: string) => {
+    todoLists.splice(todoLists.indexOf(todoListName), 1);
+
+    setTodoLists([...todoLists]);
+
+    showMessage({
+      message: 'Todo-List deleted',
+      type: 'warning',
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Dialog.Container visible={addTodoListDialogVisible}>
+      <Dialog.Container
+        visible={addTodoListDialogVisible}
+        onBackdropPress={closeNewTodoListDialog}>
         <Dialog.Title>Enter name of new Todo-List</Dialog.Title>
         <Dialog.Input
           onChangeText={setNewTodoListName}
           defaultValue={defaultNewTodoListName}></Dialog.Input>
-        <Dialog.Button
-          label="Add"
-          onPress={() => {
-            addTodoList(newTodoListName);
-          }}
-        />
+        <Dialog.Button label="Cancel" onPress={closeNewTodoListDialog} />
+        <Dialog.Button label="Add" onPress={addTodoList} />
       </Dialog.Container>
 
       <FlatList
         data={todoLists}
         contentContainerStyle={{gap: GlobalStyles.gridSize}}
-        renderItem={({item}) => <EditableItem></EditableItem>}
+        renderItem={({item}) => (
+          <TodoListItem
+            text={item}
+            onClick={() => openTodoList(item)}
+            onRename={newName => renameTodo(item, newName)}
+            onDelete={() => deleteTodoList(item)}
+          />
+        )}
       />
-      <IconButton
-        style={styles.icon}
-        icon="plus"
-        size={GlobalStyles.gridSize * 6}
-        onPress={showNewTodoListDialog}
-      />
+      <AddButton onPress={() => setAddTodoListDialogVisible(true)} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 8,
-  },
-  icon: {
-    position: 'absolute',
-    bottom: GlobalStyles.gridSize,
-    right: GlobalStyles.gridSize,
-    backgroundColor: GlobalStyles.color.gray,
-    borderRadius: GlobalStyles.gridSize * 2,
-  },
-});
+const makeStyles = (colors: MD3Colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      margin: 8,
+    },
+  });
 
 export default TodoListsScreen;

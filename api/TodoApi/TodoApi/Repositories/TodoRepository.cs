@@ -12,7 +12,7 @@ public class TodoRepository(DatabaseContext context) : ITodoRepository
     {
         var existingTodoList = await DatabaseContext.TodoLists
             .Include(tl => tl.Todos)
-            .FirstOrDefaultAsync(tl => tl.Name == todoListDto.Name);
+            .FirstOrDefaultAsync(tl => tl.CreatedByUser == todoListDto.CreatedByUser && tl.Name == todoListDto.Name);
 
         if (existingTodoList is not null)
         {

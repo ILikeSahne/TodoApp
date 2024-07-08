@@ -24,7 +24,7 @@ const LoginScreen = (props: LoginProps) => {
       return;
     }
 
-    props.navigation.replace('TodoLists', {
+    props.navigation.navigate('TodoLists', {
       username: username,
     } as TodoListScreenRouteParams);
   };

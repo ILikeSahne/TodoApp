@@ -5,6 +5,8 @@ class GlobalStyles {
 
   public static color = {
     gray: '#D3D3D3',
+    delete: '#DD0000',
+    onSecondaryContainerDisabled: '#C4CFE4',
   };
 }
 

@@ -29,6 +29,8 @@ app.MapPost("/todos", async (ITodoRepository todoRepository, [FromBody] TodoList
 {
     try
     {
+        Console.WriteLine("test");
+
         await todoRepository.AddOrUpdateTodoListAsync(todoList);
 
         return Results.Created($"/todos/{todoList.Name}", todoList);
