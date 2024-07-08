@@ -4,8 +4,15 @@ services:
   todoapi:
     image: ${DOCKER_REGISTRY-}todoapi
     ports:
-      - '10001:8080'
-      - '10002:8081'
+      - '10001:10001'
+      - '10002:10002'
     build:
       context: .
       dockerfile: TodoApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:10002;http://+:10001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro

@@ -1,0 +1,55 @@
+# General .gitignore rules
+.DS_Store
+Thumbs.db
+
+# ASP.NET Core / C# .gitignore
+api/TodoApi/bin/
+api/TodoApi/obj/
+api/TodoApi/.vs/
+api/TodoApi/*.user
+api/TodoApi/*.suo
+api/TodoApi/.idea/
+api/TodoApi/.vscode/
+
+# ASP.NET specific files
+api/TodoApi/wwwroot/lib/
+api/TodoApi/wwwroot/node_modules/
+api/TodoApi/node_modules/
+api/TodoApi/coverage/
+api/TodoApi/dist/
+
+# React Native .gitignore
+app/TodoApp/node_modules/
+app/TodoApp/npm-debug.log
+app/TodoApp/yarn-error.log
+app/TodoApp/ios/build/
+app/TodoApp/android/app/build/
+app/TodoApp/android/.gradle/
+app/TodoApp/android/.idea/
+app/TodoApp/android/local.properties
+app/TodoApp/android/.settings/
+app/TodoApp/ios/Pods/
+app/TodoApp/.vscode/
+
+# OS generated files
+app/TodoApp/.DS_Store
+app/TodoApp/Thumbs.db
+
+# Logs
+app/TodoApp/logs/
+app/TodoApp/*.log
+
+# Environment variables
+app/TodoApp/.env
+
+# IDE specific files
+app/TodoApp/.idea/
+app/TodoApp/.vscode/
+
+# Build artifacts
+app/TodoApp/build/
+app/TodoApp/.gradle/
+app/TodoApp/.temp/
+
+# Coverage reports
+app/TodoApp/coverage/
