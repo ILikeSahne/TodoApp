@@ -10,12 +10,17 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 import GlobalStyles from '../../style/GlobalStyles';
+import {showMessage} from 'react-native-flash-message';
 
 interface OptionsDotsProps {
   onRename: (newName: string) => void;
   onDelete: () => void;
 
+  renameHeader: string;
   renameText: string;
+
+  deleteHeader: string;
+  deleteText: string;
 }
 
 const OptionsDots = (props: OptionsDotsProps) => {
@@ -25,10 +30,11 @@ const OptionsDots = (props: OptionsDotsProps) => {
 
   const [newText, setNewText] = useState(props.renameText);
 
-  const [openRenameDialog, setOpenRenameDialog] = useState(false);
+  const [showRenameDialog, setShowRenameDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleRename = () => {
-    setOpenRenameDialog(false);
+    setShowRenameDialog(false);
 
     if (newText === props.renameText) {
       return;
@@ -38,24 +44,38 @@ const OptionsDots = (props: OptionsDotsProps) => {
   };
 
   const handleDelete = () => {
+    setShowDeleteDialog(false);
+
     props.onDelete?.();
   };
 
   return (
     <View>
       <Dialog.Container
-        visible={openRenameDialog}
-        onBackdropPress={() => setOpenRenameDialog(false)}>
-        <Dialog.Title>Rename Todo-List</Dialog.Title>
+        visible={showRenameDialog}
+        onBackdropPress={() => setShowRenameDialog(false)}>
+        <Dialog.Title>{props.renameHeader}</Dialog.Title>
         <Dialog.Input
           onChangeText={text => setNewText(text)}
           defaultValue={props.renameText}
         />
         <Dialog.Button
           label="Cancel"
-          onPress={() => setOpenRenameDialog(false)}
+          onPress={() => setShowRenameDialog(false)}
         />
         <Dialog.Button label="Save" onPress={handleRename} />
+      </Dialog.Container>
+
+      <Dialog.Container
+        visible={showDeleteDialog}
+        onBackdropPress={() => setShowDeleteDialog(false)}>
+        <Dialog.Title>{props.deleteHeader}</Dialog.Title>
+        <Dialog.Description>{props.deleteText}</Dialog.Description>
+        <Dialog.Button
+          label="Cancel"
+          onPress={() => setShowDeleteDialog(false)}
+        />
+        <Dialog.Button label="Confirm" onPress={handleDelete} />
       </Dialog.Container>
 
       <Menu>
@@ -67,10 +87,10 @@ const OptionsDots = (props: OptionsDotsProps) => {
           />
         </MenuTrigger>
         <MenuOptions customStyles={optionsStyles}>
-          <MenuOption onSelect={() => setOpenRenameDialog(true)}>
+          <MenuOption onSelect={() => setShowRenameDialog(true)}>
             <Text style={styles.optionsText}>Rename</Text>
           </MenuOption>
-          <MenuOption onSelect={handleDelete}>
+          <MenuOption onSelect={() => setShowDeleteDialog(true)}>
             <Text style={styles.deleteText}>Delete</Text>
           </MenuOption>
         </MenuOptions>

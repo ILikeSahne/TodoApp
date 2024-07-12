@@ -2,20 +2,18 @@ import RNFetchBlob from 'rn-fetch-blob';
 import TodoListDto, {sortTodoListDto} from './models/TodoListDto';
 import TodoDto from './models/TodoDto';
 
+const API_PATH = 'https://10.0.2.2:10002';
+
 export async function loadTodoList(
   username: string,
   todoName: string,
 ): Promise<TodoListDto> {
   try {
-    const encodedUsername = encodeURIComponent(username);
-    const encodedTodoName = encodeURIComponent(todoName);
-
     const response = await RNFetchBlob.config({
       trusty: true,
-    }).fetch(
-      'GET',
-      `https://10.0.2.2:10002/todos/${encodedUsername}/${encodedTodoName}`,
-    );
+    }).fetch('GET', `${API_PATH}/todos/${username}/${todoName}`);
+
+    console.log(`${API_PATH}/todos/${username}/${todoName}`);
 
     // status code ok
     if (response.info().status !== 200) {
@@ -43,7 +41,7 @@ export async function saveTodoList(todoList: TodoListDto) {
       trusty: true,
     }).fetch(
       'POST',
-      'https://10.0.2.2:10002/todos',
+      `${API_PATH}/todos`,
       {
         'Content-Type': 'application/json',
       },

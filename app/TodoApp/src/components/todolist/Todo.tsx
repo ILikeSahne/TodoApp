@@ -46,7 +46,10 @@ function Todo(props: TodoProps): React.JSX.Element {
       <OptionsDots
         onRename={props.onRename}
         onDelete={props.onDelete}
+        renameHeader="Rename Todo"
         renameText={props.todo.name}
+        deleteHeader="Delete Todo"
+        deleteText={`Are you sure you want to delete the Todo "${props.todo.name}"?`}
       />
     </TouchableOpacity>
   );

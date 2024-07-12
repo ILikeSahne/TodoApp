@@ -1,6 +1,5 @@
 import {NavigationContainer, ThemeProvider} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from './src/views/Home';
 import LoginScreen from './src/views/Login';
 import TodoListViewerScreen from './src/views/TodoListViewer';
 import TodoListsScreen from './src/views/TodoLists';

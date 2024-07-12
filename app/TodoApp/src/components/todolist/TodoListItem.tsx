@@ -42,7 +42,10 @@ function TodoListItem(props: TodoListItemProps): React.JSX.Element {
         <OptionsDots
           onRename={newName => props.onRename(newName)}
           onDelete={() => props.onDelete()}
+          renameHeader="Rename Todo-List"
           renameText={props.text}
+          deleteHeader="Delete Todo-List"
+          deleteText={`Are you sure you want to delete the Todo-List "${props.text}"?`}
         />
       </View>
     </TouchableOpacity>

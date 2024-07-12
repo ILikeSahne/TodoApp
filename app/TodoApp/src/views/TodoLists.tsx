@@ -43,7 +43,7 @@ function TodoListsScreen({
   const [addTodoListDialogVisible, setAddTodoListDialogVisible] =
     useState(false);
 
-  async function loadTodoLists() {
+  const loadTodoLists = async () => {
     const todoListsJson = await AsyncStorage.getItem(
       `${route!.params?.username}_todolists`,
     );
@@ -51,9 +51,9 @@ function TodoListsScreen({
     const todoLists = JSON.parse(todoListsJson ?? '[]') as string[];
 
     setTodoLists(todoLists);
-  }
+  };
 
-  function addTodoList() {
+  const addTodoList = () => {
     if (todoLists.includes(newTodoListName)) {
       Alert.alert('Todo-List already exists');
       return;
@@ -64,29 +64,18 @@ function TodoListsScreen({
     setTodoLists([...todoLists, newTodoListName]);
 
     createEmptyTodoList(route!.params!.username, newTodoListName);
-  }
+  };
 
   const closeNewTodoListDialog = () => {
     setAddTodoListDialogVisible(false);
   };
 
-  function openTodoList(todoListName: string) {
+  const openTodoList = (todoListName: string) => {
     navigation?.navigate('TodoListViewer', {
       todoListName: todoListName,
       username: route!.params!.username,
     } as TodoListViewerRouteParams);
-  }
-
-  useEffect(() => {
-    loadTodoLists();
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem(
-      `${route!.params!.username}_todolists`,
-      JSON.stringify(todoLists),
-    );
-  }, [todoLists]);
+  };
 
   const renameTodo = (todoListName: string, newName: string) => {
     todoLists.splice(todoLists.indexOf(todoListName), 1, newName);
@@ -106,6 +95,17 @@ function TodoListsScreen({
       type: 'warning',
     });
   };
+
+  useEffect(() => {
+    loadTodoLists();
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.setItem(
+      `${route!.params!.username}_todolists`,
+      JSON.stringify(todoLists),
+    );
+  }, [todoLists]);
 
   return (
     <View style={styles.container}>
