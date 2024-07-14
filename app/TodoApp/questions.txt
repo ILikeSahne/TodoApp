@@ -1,2 +1,4 @@
 Should Todo rely on parent state or have its own?
 (State in child with only event as state update messages --> only child needs to rerender)
+
+Jest
