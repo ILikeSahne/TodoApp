@@ -5,6 +5,8 @@ Thumbs.db
 # ASP.NET Core / C# .gitignore
 api/TodoApi/bin/
 api/TodoApi/obj/
+api/TodoApi/TodoApi/bin/
+api/TodoApi/TodoApi/obj/
 api/TodoApi/.vs/
 api/TodoApi/*.user
 api/TodoApi/*.suo
